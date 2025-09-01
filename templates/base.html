@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css?family=Mozilla+Headline:200,300,regular,500,600,700" rel="stylesheet" />
+
+    {% block css %}
+
+    {% endblock %}
+
+</head>
+
+<body>
+    <header></header>
+
+    <main class="bg">
+        {% block content %}
+
+        {% endblock %}
+    </main>
+
+    <footer></footer>
+    {% block js %}
+    {% endblock %}
+</body>
+
+</html>
