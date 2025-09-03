@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DC Power Prediction</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        .card { max-width: 560px; margin: auto; padding: 1.5rem; border: 1px solid #ddd; border-radius: 8px; }
+        .row { display: flex; gap: 1rem; }
+        label { display: block; margin: 0.5rem 0 0.25rem; }
+        input, select { width: 100%; padding: 0.5rem; }
+        button { margin-top: 1rem; padding: 0.6rem 1rem; }
+        .result { margin-top: 1rem; font-weight: bold; }
+        .error { color: #b00020; margin-top: 1rem; }
+    </style>
+    <script>
+    </script>
+    </head>
+<body>
+    <div class="card">
+        <h2>DC Power Prediction</h2>
+        <form method="post">
+            <label for="datetime">Date & Time</label>
+            <input type="datetime-local" id="datetime" name="datetime" value="{{ form.datetime }}" placeholder="YYYY-MM-DDTHH:MM" required />
+
+            <div class="row">
+                <div style="flex:1">
+                    <label for="ambient_temperature">Ambient Temperature (°C)</label>
+                    <input type="number" step="any" id="ambient_temperature" name="ambient_temperature" value="{{ form.ambient_temperature }}" placeholder="e.g., 28.5" required />
+                </div>
+                <div style="flex:1">
+                    <label for="module_temperature">Module Temperature (°C)</label>
+                    <input type="number" step="any" id="module_temperature" name="module_temperature" value="{{ form.module_temperature }}" placeholder="e.g., 34.2" required />
+                </div>
+            </div>
+
+            <div class="row">
+                <div style="flex:1">
+                    <label for="irradiation">Irradiation</label>
+                    <input type="number" step="any" id="irradiation" name="irradiation" value="{{ form.irradiation }}" placeholder="e.g., 0.75" required />
+                </div>
+                <div style="flex:1">
+                    <label for="plant_id">Plant</label>
+                    <select id="plant_id" name="plant_id">
+                        <option value="1" {% if form.plant_id == '1' %}selected{% endif %}>Plant 1</option>
+                        <option value="2" {% if form.plant_id == '2' %}selected{% endif %}>Plant 2</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit">Predict</button>
+        </form>
+
+        {% if prediction is not none %}
+            <div class="result">Predicted DC Power: {{ prediction }} W</div>
+            {% if explanation %}
+                <p style="margin-top:0.5rem">{{ explanation }}</p>
+            {% endif %}
+            {% if actions and actions|length > 0 %}
+                <div style="margin-top:0.5rem">
+                    <div>Suggested actions:</div>
+                    <ul>
+                        {% for a in actions %}
+                            <li>{{ a }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endif %}
+        {% if error %}
+            <div class="error">Error: {{ error }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
+
+
