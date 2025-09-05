@@ -54,7 +54,7 @@ def build_features(payload: dict) -> pd.DataFrame:
     return pd.DataFrame([row], columns=FEATURE_COLS)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/predict', methods=['GET', 'POST'])
 def predict():
     prediction = None
     error = None
@@ -114,5 +114,24 @@ def predict():
     return render_template('predict.html', prediction=prediction, explanation=explanation, actions=actions, error=error, form=form)
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    return render_template('login.html')
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/base')
+def base():
+    return render_template('base.html')
+
+app.run(debug=True)

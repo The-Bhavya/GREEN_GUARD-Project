@@ -3,629 +3,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Greenguard - Predictive Equipment Failure Analysis</title>
+    <title>Green Guard Prediction - AI-Powered Environmental Monitoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+        .green-gradient {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         }
-
-        /* Header */
-        header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: white;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo::before {
-            content: "⚡";
-            margin-right: 10px;
-            font-size: 2rem;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        /* Hero Section */
-        .hero {
-            text-align: center;
-            padding: 6rem 0;
-            color: white;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0.9;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-
-        .btn-primary:hover {
-            background: #45a049;
-        }
-
-        .btn-secondary:hover {
-            background: white;
-            color: #333;
-        }
-
-        /* Features Section */
-        .features {
-            background: white;
-            padding: 6rem 0;
-        }
-
-        .features h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #333;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .feature-card {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            border: 1px solid #e9ecef;
-            cursor: pointer;
+        .card-hover {
             transition: all 0.3s ease;
         }
-
-        .feature-card:hover {
+        .card-hover:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border-color: #4CAF50;
         }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #4CAF50;
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
         }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #333;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
-
-        .feature-card p {
-            color: #666;
-            line-height: 1.6;
+        .animate-pulse-slow {
+            animation: pulse 3s ease-in-out infinite;
         }
-
-        /* Stats Section */
-        .stats {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            color: white;
-            padding: 4rem 0;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            text-align: center;
-        }
-
-        .stat-item {
-            padding: 1rem;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .stat-item:hover {
-            transform: scale(1.05);
-        }
-
-        .stat-number {
-            font-size: 3rem;
-            font-weight: bold;
-            display: block;
-            color: #4CAF50;
-        }
-
-        .stat-label {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        /* Dashboard Preview */
-        .dashboard-preview {
-            padding: 6rem 0;
-            background: #f8f9fa;
-        }
-
-        .preview-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        .preview-text h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            color: #333;
-        }
-
-        .preview-text p {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 2rem;
-        }
-
-        .preview-mockup {
-            background: #fff;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: 1px solid #e9ecef;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .preview-mockup:hover {
-            transform: scale(1.02);
-        }
-
-        .mockup-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 0.5rem;
-        }
-
-        .status-good { background: #4CAF50; }
-        .status-warning { background: #FF9800; }
-        .status-critical { background: #f44336; }
-
-        .equipment-list {
-            list-style: none;
-        }
-
-        .equipment-item {
-            padding: 0.75rem;
-            margin: 0.5rem 0;
-            background: #f8f9fa;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.3s ease;
-        }
-
-        .equipment-item:hover {
-            background: #e9ecef;
-        }
-
-        .risk-level {
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .risk-low { background: #d4edda; color: #155724; }
-        .risk-medium { background: #fff3cd; color: #856404; }
-        .risk-high { background: #f8d7da; color: #721c24; }
-
-        /* Footer */
-        footer {
-            background: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 3rem 0;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section h3 {
-            margin-bottom: 1rem;
-            color: #4CAF50;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section li {
-            margin: 0.5rem 0;
-        }
-
-        .footer-section a {
-            color: #bdc3c7;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-section a:hover {
-            color: #4CAF50;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .preview-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
+        .scroll-smooth {
+            scroll-behavior: smooth;
         }
     </style>
 </head>
-<body>
-    <header>
-        <nav class="container">
-            <div class="logo">Greenguard</div>
-            <ul class="nav-links">
-                <li><a href="#" onclick="scrollToSection('features')">Features</a></li>
-                <li><a href="#" onclick="scrollToSection('dashboard-preview')">Dashboard</a></li>
-                <li><a href="#" onclick="showModal('about')">About</a></li>
-                <li><a href="#" onclick="showModal('contact')">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <section class="hero">
-            <div class="container">
-                <h1>Predict. Prevent. Preserve.</h1>
-                <p>Advanced AI-powered predictive maintenance for solar and wind farm equipment. Detect potential failures before they happen and maximize your renewable energy ROI.</p>
-                <div class="cta-buttons">
-                    <a href="#" class="btn btn-primary" onclick="showModal('demo')">Request Demo</a>
-                    <a href="#" class="btn btn-secondary" onclick="scrollToSection('features')">Learn More</a>
+<body class="scroll-smooth">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-leaf text-green-500 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-800">Green Guard</span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="text-gray-800 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="#features" class="text-gray-500 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Features</a>
+                        <a href="#about" class="text-gray-500 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+                        <a href="#contact" class="text-gray-500 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                        <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Get Started
+                        </button>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
                 </div>
             </div>
-        </section>
-
-        <section id="features" class="features">
-            <div class="container">
-                <h2>Intelligent Equipment Monitoring</h2>
-                <div class="features-grid">
-                    <div class="feature-card" onclick="showFeatureDetails('predictive')">
-                        <div class="feature-icon">🔮</div>
-                        <h3>Predictive Analytics</h3>
-                        <p>Machine learning algorithms analyze equipment patterns to predict failures up to 30 days in advance, reducing downtime by up to 75%.</p>
-                    </div>
-                    <div class="feature-card" onclick="showFeatureDetails('realtime')">
-                        <div class="feature-icon">⚡</div>
-                        <h3>Real-time Monitoring</h3>
-                        <p>Continuous monitoring of solar panels, wind turbines, inverters, and other critical infrastructure with instant alert notifications.</p>
-                    </div>
-                    <div class="feature-card" onclick="showFeatureDetails('cost')">
-                        <div class="feature-icon">💰</div>
-                        <h3>Cost Optimization</h3>
-                        <p>Optimize maintenance schedules and reduce emergency repair costs. Our clients see average savings of 40% on maintenance expenses.</p>
-                    </div>
-                    <div class="feature-card" onclick="showFeatureDetails('integration')">
-                        <div class="feature-icon">🔧</div>
-                        <h3>Easy Integration</h3>
-                        <p>Seamlessly integrates with existing SCADA systems and IoT sensors. Deploy in minutes, not months.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="stats">
-            <div class="container">
-                <div class="stats-grid">
-                    <div class="stat-item" onclick="showStatDetails('uptime')">
-                        <span class="stat-number">99.8%</span>
-                        <span class="stat-label">Average Uptime</span>
-                    </div>
-                    <div class="stat-item" onclick="showStatDetails('cost-reduction')">
-                        <span class="stat-number">40%</span>
-                        <span class="stat-label">Cost Reduction</span>
-                    </div>
-                    <div class="stat-item" onclick="showStatDetails('early-detection')">
-                        <span class="stat-number">30</span>
-                        <span class="stat-label">Days Early Detection</span>
-                    </div>
-                    <div class="stat-item" onclick="showStatDetails('farms')">
-                        <span class="stat-number">500+</span>
-                        <span class="stat-label">Farms Monitored</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="dashboard-preview" class="dashboard-preview">
-            <div class="container">
-                <div class="preview-content">
-                    <div class="preview-text">
-                        <h2>Comprehensive Dashboard</h2>
-                        <p>Get a complete view of your renewable energy infrastructure health with our intuitive dashboard. Monitor equipment status, track performance metrics, and receive actionable insights all in one place.</p>
-                        <a href="#" class="btn btn-primary" onclick="showModal('dashboard')">Explore Dashboard</a>
-                    </div>
-                    <div class="preview-mockup" onclick="showDashboardDemo()">
-                        <div class="mockup-header">
-                            <h4>Equipment Status Overview</h4>
-                        </div>
-                        <ul class="equipment-list">
-                            <li class="equipment-item">
-                                <span><span class="status-indicator status-good"></span>Solar Panel Array A1-15</span>
-                                <span class="risk-level risk-low">Low Risk</span>
-                            </li>
-                            <li class="equipment-item">
-                                <span><span class="status-indicator status-warning"></span>Wind Turbine WT-07</span>
-                                <span class="risk-level risk-medium">Medium Risk</span>
-                            </li>
-                            <li class="equipment-item">
-                                <span><span class="status-indicator status-good"></span>Inverter Bank INV-23</span>
-                                <span class="risk-level risk-low">Low Risk</span>
-                            </li>
-                            <li class="equipment-item">
-                                <span><span class="status-indicator status-critical"></span>Transformer TR-04</span>
-                                <span class="risk-level risk-high">High Risk</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Product</h3>
-                    <ul>
-                        <li><a href="#" onclick="showModal('features')">Features</a></li>
-                        <li><a href="#" onclick="showModal('pricing')">Pricing</a></li>
-                        <li><a href="#" onclick="showModal('demo')">Request Demo</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Company</h3>
-                    <ul>
-                        <li><a href="#" onclick="showModal('about')">About Us</a></li>
-                        <li><a href="#" onclick="showModal('careers')">Careers</a></li>
-                        <li><a href="#" onclick="showModal('contact')">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Resources</h3>
-                    <ul>
-                        <li><a href="#" onclick="showModal('docs')">Documentation</a></li>
-                        <li><a href="#" onclick="showModal('support')">Support</a></li>
-                        <li><a href="#" onclick="showModal('blog')">Blog</a></li>
-                    </ul>
-                </div>
-            </div>
-            <p>&copy; 2025 Greenguard. All rights reserved. Powering the future of renewable energy maintenance.</p>
         </div>
-    </footer>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="text-gray-800 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="#features" class="text-gray-500 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Features</a>
+                <a href="#about" class="text-gray-500 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="#contact" class="text-gray-500 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Contact</a>
+                <button class="bg-green-500 hover:bg-green-600 text-white w-full text-left px-3 py-2 rounded-md text-base font-medium">
+                    Get Started
+                </button>
+            </div>
+        </div>
+    </nav>
 
-    <script>
-        // Smooth scrolling function
-        function scrollToSection(sectionId) {
-            const element = document.getElementById(sectionId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
+    <!-- Hero Section -->
+    <section id="home" class="gradient-bg min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-black opacity-20"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="animate-float">
+                <i class="fas fa-seedling text-6xl text-white mb-8"></i>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
+                Green Guard Prediction
+            </h1>
+            <p class="text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto">
+                AI-Powered Environmental Monitoring and Prediction System for a Sustainable Future
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-white text-green-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg">
+                    <i class="fas fa-play mr-2"></i>
+                    Watch Demo
+                </button>
+                <button class="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-green-600 transition-colors">
+                    <i class="fas fa-download mr-2"></i>
+                    Download App
+                </button>
+            </div>
+        </div>
+        <!-- Floating elements -->
+        <div class="absolute top-20 left-10 animate-pulse-slow">
+            <i class="fas fa-cloud text-white text-2xl opacity-30"></i>
+        </div>
+        <div class="absolute top-40 right-20 animate-pulse-slow" style="animation-delay: 1s;">
+            <i class="fas fa-sun text-yellow-300 text-3xl opacity-40"></i>
+        </div>
+        <div class="absolute bottom-20 left-20 animate-pulse-slow" style="animation-delay: 2s;">
+            <i class="fas fa-tree text-green-300 text-2xl opacity-30"></i>
+        </div>
+    </section>
 
-        // Modal simulation function
-        function showModal(type) {
-            const messages = {
-                'demo': 'Demo request feature would be implemented here. This would open a form to schedule a personalized demonstration.',
-                'about': 'About page would show company information, mission, and team details.',
-                'contact': 'Contact form would be displayed here with fields for name, email, company, and message.',
-                'dashboard': 'Full dashboard view would open here showing detailed analytics, charts, and equipment monitoring interfaces.',
-                'features': 'Detailed features page would display comprehensive information about all platform capabilities.',
-                'pricing': 'Pricing plans and subscription options would be shown here.',
-                'careers': 'Job openings and career opportunities would be listed here.',
-                'docs': 'Technical documentation and API references would be available here.',
-                'support': 'Support center with FAQs, tutorials, and help resources.',
-                'blog': 'Company blog with industry insights and product updates.'
-            };
-            
-            alert(messages[type] || 'This section is under development.');
-        }
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                    Powerful Features
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Harness the power of artificial intelligence to predict and monitor environmental changes
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white rounded-xl p-8 shadow-lg card-hover">
+                    <div class="green-gradient w-16 h-16 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-brain text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">AI Prediction Engine</h3>
+                    <p class="text-gray-600 mb-4">
+                        Advanced machine learning algorithms analyze environmental data to predict future trends and potential issues.
+                    </p>
+                    <button class="text-green-500 font-semibold hover:text-green-600 transition-colors">
+                        Learn More <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
 
-        // Feature details function
-        function showFeatureDetails(feature) {
-            const details = {
-                'predictive': 'Our AI algorithms analyze historical data, sensor readings, and environmental factors to identify patterns that precede equipment failures. This enables proactive maintenance scheduling.',
-                'realtime': 'Advanced sensor networks provide continuous monitoring of temperature, vibration, electrical parameters, and performance metrics across your entire renewable energy infrastructure.',
-                'cost': 'By shifting from reactive to predictive maintenance, reduce emergency repair costs, optimize spare parts inventory, and extend equipment lifespan significantly.',
-                'integration': 'RESTful APIs and standard protocols ensure seamless integration with existing monitoring systems, SCADA, and enterprise software without disrupting operations.'
-            };
-            
-            alert(details[feature] || 'Feature details coming soon.');
-        }
+                <!-- Feature 2 -->
+                <div class="bg-white rounded-xl p-8 shadow-lg card-hover">
+                    <div class="green-gradient w-16 h-16 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Real-time Monitoring</h3>
+                    <p class="text-gray-600 mb-4">
+                        Continuous monitoring of air quality, temperature, humidity, and other environmental factors in real-time.
+                    </p>
+                    <button class="text-green-500 font-semibold hover:text-green-600 transition-colors">
+                        Learn More <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
 
-        // Statistics details function
-        function showStatDetails(stat) {
-            const statDetails = {
-                'uptime': 'Our clients achieve 99.8% average uptime through predictive maintenance, compared to industry average of 97.2%.',
-                'cost-reduction': 'Average 40% reduction in maintenance costs through optimized scheduling and prevention of catastrophic failures.',
-                'early-detection': 'Machine learning models can predict equipment failures up to 30 days in advance, allowing for planned maintenance.',
-                'farms': 'Currently monitoring over 500 renewable energy facilities across 25 countries worldwide.'
-            };
-            
-            alert(statDetails[stat] || 'Statistic details coming soon.');
-        }
+                <!-- Feature 3 -->
+                <div class="bg-white rounded-xl p-8 shadow-lg card-hover">
+                    <div class="green-gradient w-16 h-16 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-mobile-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Mobile App</h3>
+                    <p class="text-gray-600 mb-4">
+                        Access your environmental data and predictions anywhere with our intuitive mobile application.
+                    </p>
+                    <button class="text-green-500 font-semibold hover:text-green-600 transition-colors">
+                        Learn More <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
 
-        // Dashboard demo function
-        function showDashboardDemo() {
-            alert('Interactive dashboard demo would launch here, showing real-time equipment status, predictive alerts, performance charts, and maintenance scheduling tools.');
-        }
+                <!-- Feature 4 -->
+                <div class="bg-white rounded-xl p-8 shadow-lg card-hover">
+                    <div class="green-gradient w-16 h-16 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Alert System</h3>
+                    <p class="text-gray-600 mb-4">
+                        Get instant notifications about environmental hazards and critical changes in your monitored areas.
+                    </p>
+                    <button class="text-green-500 font-semibold hover:text-green-600 transition-colors">
+                        Learn More <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
 
-        // Add some interactive hover effects with JavaScript
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add click feedback to buttons
-            const buttons = document.querySelectorAll('.btn');
-            buttons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    // Create ripple effect
-                    const ripple = document.createElement('span');
-                    const rect = this.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    const x = e.clientX - rect.left - size / 2;
-                    const y = e.clientY - rect.top - size / 2;
-                    
-                    ripple.style.width = ripple.style.height = size + 'px';
-                    ripple.style.left = x + 'px';
-                    ripple.style.top = y + 'px';
-                    ripple.style.position = 'absolute';
-                    ripple.style.borderRadius = '50%';
-                    ripple.style.background = 'rgba(255,255,255,0.3)';
-                    ripple.style.transform = 'scale(0)';
-                    ripple.style.animation = 'ripple 0.6s linear';
-                    ripple.style.pointerEvents = 'none';
-                    
-                    this.appendChild(ripple);
-                    
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
-            });
-        });
+                <!-- Feature 5 -->
+                <div class="bg-white rounded-xl p-8 shadow-lg card-hover">
+                    <div class="green-gradient w-16 h-16 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-database text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Data Analytics</h3>
+                    <p class="text-gray-600 mb-4">
+                        Comprehensive data analysis and reporting tools to understand environmental patterns and trends.
+                    </p>
+                    <button class="text-green-500 font-semibold hover:text-green-600 transition-colors">
+                        Learn More <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
 
-        // Add CSS for ripple animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-            .btn {
-                position: relative;
-                overflow: hidden;
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
+                <!-- Feature 6 -->
+                <div class="bg-white rounded-xl p-8 shadow-lg card-hover">
+                    <div class="green-gradient w-16 h-16 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Community</h3>
+                    <p class="text-gray-600 mb-4">
+                        Connect with environmental enthusiasts and experts to share insights and collaborate on solutions.
+                    </p>
+                    <button class="text-green-500 font-semibold hover:text-green-600 transition-colors">
+                        Learn More <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20 green-gradient">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+                <div class="text-white">
+                    <div class="text-4xl font-bold mb-2">10K+</div>
+                    <div class="text-lg opacity-90">Active Users</div>
+                </div>
+                <div class="text-white">
+                    <div class="text-4xl font-bold mb-2">50+</div>
+                    <div class="text-lg opacity-90">Cities Monitored</div>
+                </div>
+                <div class="text-white">
+                    <div class="text-4xl font-bold mb-2">99.9%</div>
+                    <div class="text-lg opacity-90">Accuracy Rate</div>
+                </div>
+                <div class="text-white">
+                    <div class="text-4xl font-bold mb-2">24/7</div>
+                    <div class="text-lg opacity-90">Monitoring</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
+                        About Green Guard Prediction
+                    </h2>
+                    <p class="text-lg text-gray-600 mb-6">
+                        Green Guard Prediction is a cutting-edge environmental monitoring and prediction platform that leverages artificial intelligence to help communities, businesses, and individuals make informed decisions about environmental health and sustainability.
+                    </p>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Our mission is to create a more sustainable future by providing accurate, real-time environmental data and predictions that enable proactive environmental management and protection.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                            Learn More
+                        </button>
+                        <button class="border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                            Contact Us
+                        </button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="bg-gray-100 rounded-2xl p-8 shadow-lg">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center">
+                                <div class="green-gradient w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-thermometer-half text-white text-xl"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-800">22°C</div>
+                                <div class="text-sm text-gray-600">Temperature</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="green-gradient w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-wind text-white text-xl"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-800">12 km/h</div>
+                                <div class="text-sm text-gray-600">Wind Speed</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="green-gradient w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-tint text-white text-xl"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-800">65%</div>
+                                <div class="text-sm text-gray-600">Humidity</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="green-gradient w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-smog text-white text-xl"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-800">Good</div>
+                                <div class="text-sm text-gray-600">Air Quality</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                    Get In Touch
+                </h2>
+                <p class="text-xl text-gray-600">
+                    Ready to start monitoring your environment? Contact us today!
+                </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">Contact Information</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-envelope text-green-500 text-xl mr-4"></i>
+                            <span class="text-gray-600">info@greenguard.com</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-phone text-green-500 text-xl mr-4"></i>
+                            <span class="text-gray-600">+1 (555) 123-4567</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-green-500 text-xl mr-4"></i>
+                            <span class="text-gray-600">123 Green Street, Eco City, EC 12345</span>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">Follow Us</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-gray-400 hover:text-green-500 transition-colors">
+                                <i class="fab fa-twitter text-2xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-green-500 transition-colors">
+                                <i class="fab fa-facebook text-2xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-green-500 transition-colors">
+                                <i class="fab fa-linkedin text-2xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-green-500 transition-colors">
+                                <i class="fab fa-instagram text-2xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <form class="bg-white rounded-xl p-8 shadow-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        </div>
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"></textarea>
+                        </div>
+                        <button type="submit" class="w-full mt-6 bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-colors">
+                            Send Message
+                                </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
-</html>
+
+
+    <!-- Footer -->
