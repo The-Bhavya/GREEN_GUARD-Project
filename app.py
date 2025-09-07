@@ -84,6 +84,7 @@ def build_features(payload: dict) -> pd.DataFrame:
 
 
 @app.route('/predict', methods=['GET', 'POST'])
+@login_required
 def predict():
     prediction = None
     error = None
