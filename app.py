@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for,session, flash
+from flask import Flask, render_template, request, redirect, url_for,session, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -6,8 +6,12 @@ import pandas as pd
 import joblib
 from pathlib import Path
 from datetime import datetime
-from flask_bcrypt import bcrypt
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import plotly.graph_objects as go
+import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.utils
+import json
 
 
 
@@ -16,7 +20,16 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 db = SQLAlchemy(app)
 
-class User(db.Model):
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
@@ -137,13 +150,13 @@ def home():
 # Login Route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST' and 'login' in request.form:
+    if request.method == 'POST':
         email_or_username = request.form['email']
         password = request.form['password']
         
         user = User.query.filter_by(email=email_or_username).first() or \
                 User.query.filter_by(username=email_or_username).first()
-        if user and bcrypt.check_password_hash(user.password, password):
+        if user and check_password_hash(user.password, password):
             login_user(user)
             flash('Login successful!', 'success')
             return redirect(url_for('home'))
@@ -155,7 +168,7 @@ def login():
 # Signup Route (use same login.html)
 @app.route('/signup', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST' and 'signup' in request.form:
+    if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
@@ -163,15 +176,23 @@ def register():
             (User.username == username) | (User.email == email)
         ).first()
         if existing_user:
-            flash('Username or email already exists')
+            flash('Username or email already exists', 'danger')
         else:
             hashed_password = generate_password_hash(password)
             new_user = User(username=username, email=email, password=hashed_password)
             db.session.add(new_user)
             db.session.commit()
-            flash('Registration successful! Please login.')
+            flash('Registration successful! Please login.', 'success')
             return redirect(url_for('login'))
     return render_template('login.html')
+
+# Logout Route
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out successfully.', 'success')
+    return redirect(url_for('login'))
 
 @app.route('/about')
 def about():
@@ -180,6 +201,197 @@ def about():
 @app.route('/base')
 def base():
     return render_template('base.html')
+
+# Dashboard Route
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    try:
+        # Load and prepare data
+        plant1_gen = pd.read_csv('Plant_1_Generation_Data.csv')
+        plant1_weather = pd.read_csv('Plant_1_Weather_Sensor_Data.csv')
+        plant2_gen = pd.read_csv('Plant_2_Generation_Data.csv')
+        plant2_weather = pd.read_csv('Plant_2_Weather_Sensor_Data.csv')
+
+        # Convert DATE_TIME columns
+        plant1_gen['DATE_TIME'] = pd.to_datetime(plant1_gen['DATE_TIME'])
+        plant1_weather['DATE_TIME'] = pd.to_datetime(plant1_weather['DATE_TIME'])
+        plant2_gen['DATE_TIME'] = pd.to_datetime(plant2_gen['DATE_TIME'])
+        plant2_weather['DATE_TIME'] = pd.to_datetime(plant2_weather['DATE_TIME'])
+
+        # Merge data
+        plant1_data = pd.merge(plant1_gen, plant1_weather, on='DATE_TIME', how='inner')
+        plant2_data = pd.merge(plant2_gen, plant2_weather, on='DATE_TIME', how='inner')
+        plant1_data['PLANT_ID'] = 1
+        plant2_data['PLANT_ID'] = 2
+        combined_data = pd.concat([plant1_data, plant2_data], ignore_index=True)
+
+        # Extract time features
+        combined_data['HOUR'] = combined_data['DATE_TIME'].dt.hour
+        combined_data['DAY_OF_WEEK'] = combined_data['DATE_TIME'].dt.day_name()
+        combined_data['MONTH'] = combined_data['DATE_TIME'].dt.month_name()
+        combined_data['DATE'] = combined_data['DATE_TIME'].dt.date
+
+        # Calculate KPIs
+        total_generation = combined_data['DC_POWER'].sum() / 1000000
+        avg_daily_generation = combined_data.groupby('DATE')['DC_POWER'].sum().mean() / 1000
+        max_daily_generation = combined_data.groupby('DATE')['DC_POWER'].sum().max() / 1000
+        avg_irradiation = combined_data['IRRADIATION'].mean()
+        avg_ambient_temp = combined_data['AMBIENT_TEMPERATURE'].mean()
+        avg_module_temp = combined_data['MODULE_TEMPERATURE'].mean()
+
+        # Create graphs
+        graphs = create_dashboard_graphs(combined_data)
+        
+        # Prepare insights
+        insights = calculate_insights(combined_data)
+
+        return render_template('dashboard.html', 
+                             graphs=graphs,
+                             insights=insights,
+                             kpis={
+                                 'total_generation': total_generation,
+                                 'avg_daily_generation': avg_daily_generation,
+                                 'max_daily_generation': max_daily_generation,
+                                 'avg_irradiation': avg_irradiation,
+                                 'avg_ambient_temp': avg_ambient_temp,
+                                 'avg_module_temp': avg_module_temp
+                             })
+    except Exception as e:
+        flash(f'Error loading dashboard: {str(e)}', 'danger')
+        return redirect(url_for('home'))
+
+def create_dashboard_graphs(data):
+    """Create all dashboard graphs and return as JSON"""
+    graphs = {}
+    
+    # 1. Daily Generation Trend
+    daily_generation = data.groupby(['DATE', 'PLANT_ID'])['DC_POWER'].sum().reset_index()
+    daily_generation['DC_POWER_MWh'] = daily_generation['DC_POWER'] / 1000000
+    
+    fig_daily = px.line(
+        daily_generation, 
+        x='DATE', 
+        y='DC_POWER_MWh', 
+        color='PLANT_ID',
+        title='Daily Power Generation Trend',
+        color_discrete_sequence=['#2E8B57', '#32CD32']
+    )
+    fig_daily.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    graphs['daily_trend'] = json.dumps(fig_daily, cls=plotly.utils.PlotlyJSONEncoder)
+    
+    # 2. Hourly Generation Pattern
+    hourly_avg = data.groupby(['HOUR', 'PLANT_ID'])['DC_POWER'].mean().reset_index()
+    hourly_avg['DC_POWER_kW'] = hourly_avg['DC_POWER'] / 1000
+    
+    fig_hourly = px.bar(
+        hourly_avg,
+        x='HOUR',
+        y='DC_POWER_kW',
+        color='PLANT_ID',
+        title='Average Hourly Power Generation Pattern',
+        color_discrete_sequence=['#2E8B57', '#32CD32'],
+        barmode='group'
+    )
+    fig_hourly.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    graphs['hourly_pattern'] = json.dumps(fig_hourly, cls=plotly.utils.PlotlyJSONEncoder)
+    
+    # 3. Weather Correlation Heatmap
+    weather_corr = data[['DC_POWER', 'AMBIENT_TEMPERATURE', 'MODULE_TEMPERATURE', 'IRRADIATION']].corr()
+    fig_heatmap = px.imshow(
+        weather_corr,
+        text_auto=True,
+        aspect="auto",
+        title='Weather Factors Correlation with Power Generation',
+        color_continuous_scale='RdYlGn'
+    )
+    fig_heatmap.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    graphs['weather_correlation'] = json.dumps(fig_heatmap, cls=plotly.utils.PlotlyJSONEncoder)
+    
+    # 4. Irradiation vs Power Scatter
+    sample_data = data.sample(n=min(3000, len(data)))
+    fig_scatter = px.scatter(
+        sample_data,
+        x='IRRADIATION',
+        y='DC_POWER',
+        color='PLANT_ID',
+        title='Solar Irradiation vs Power Generation',
+        color_discrete_sequence=['#2E8B57', '#32CD32'],
+        opacity=0.6
+    )
+    fig_scatter.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    graphs['irradiation_scatter'] = json.dumps(fig_scatter, cls=plotly.utils.PlotlyJSONEncoder)
+    
+    # 5. Monthly Performance
+    monthly_data = data.groupby(['MONTH', 'PLANT_ID'])['DC_POWER'].sum().reset_index()
+    monthly_data['DC_POWER_MWh'] = monthly_data['DC_POWER'] / 1000000
+    
+    month_order = ['January', 'February', 'March', 'April', 'May', 'June',
+                   'July', 'August', 'September', 'October', 'November', 'December']
+    monthly_data['MONTH'] = pd.Categorical(monthly_data['MONTH'], categories=month_order, ordered=True)
+    monthly_data = monthly_data.sort_values('MONTH')
+    
+    fig_monthly = px.bar(
+        monthly_data,
+        x='MONTH',
+        y='DC_POWER_MWh',
+        color='PLANT_ID',
+        title='Monthly Power Generation Comparison',
+        color_discrete_sequence=['#2E8B57', '#32CD32'],
+        barmode='group'
+    )
+    fig_monthly.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    graphs['monthly_performance'] = json.dumps(fig_monthly, cls=plotly.utils.PlotlyJSONEncoder)
+    
+    # 6. Power Distribution Histogram
+    fig_hist = px.histogram(
+        data,
+        x='DC_POWER',
+        color='PLANT_ID',
+        title='Power Generation Distribution',
+        color_discrete_sequence=['#2E8B57', '#32CD32'],
+        nbins=30,
+        opacity=0.7
+    )
+    fig_hist.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    graphs['power_distribution'] = json.dumps(fig_hist, cls=plotly.utils.PlotlyJSONEncoder)
+    
+    return graphs
+
+def calculate_insights(data):
+    """Calculate key insights from the data"""
+    insights = {}
+    
+    # Daily generation insights
+    daily_gen = data.groupby('DATE')['DC_POWER'].sum()
+    insights['avg_daily'] = daily_gen.mean() / 1000
+    insights['max_daily'] = daily_gen.max() / 1000
+    insights['min_daily'] = daily_gen.min() / 1000
+    
+    # Hourly insights
+    hourly_avg = data.groupby('HOUR')['DC_POWER'].mean()
+    peak_hour = hourly_avg.idxmax()
+    insights['peak_hour'] = peak_hour
+    insights['peak_power'] = hourly_avg.max() / 1000
+    
+    # Weather insights
+    weather_corr = data[['DC_POWER', 'IRRADIATION', 'AMBIENT_TEMPERATURE', 'MODULE_TEMPERATURE']].corr()
+    insights['irradiation_corr'] = weather_corr.loc['IRRADIATION', 'DC_POWER']
+    insights['temp_corr'] = weather_corr.loc['AMBIENT_TEMPERATURE', 'DC_POWER']
+    
+    # Plant comparison
+    plant1_total = data[data['PLANT_ID'] == 1]['DC_POWER'].sum() / 1000000
+    plant2_total = data[data['PLANT_ID'] == 2]['DC_POWER'].sum() / 1000000
+    insights['plant1_total'] = plant1_total
+    insights['plant2_total'] = plant2_total
+    insights['better_plant'] = 'Plant 1' if plant1_total > plant2_total else 'Plant 2'
+    
+    # Monthly insights
+    monthly_total = data.groupby('MONTH')['DC_POWER'].sum()
+    insights['best_month'] = monthly_total.idxmax()
+    insights['worst_month'] = monthly_total.idxmin()
+    
+    return insights
 
 if __name__ == '__main__':
     if not os.path.exists('users.db'):
