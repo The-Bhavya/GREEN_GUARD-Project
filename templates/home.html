@@ -49,6 +49,22 @@
         .hero-bg {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         }
+        /* New hero background image with blur */
+        .hero-img { position: relative; }
+        .hero-img .bg-media {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            filter: blur(6px);
+            transform: scale(1.05);
+        }
+        .hero-img .bg-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
         
     </style>
 </head>
@@ -117,13 +133,15 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero-bg min-h-screen flex items-center justify-center relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <section id="home" class="hero-img min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="bg-media"></div>
+        <div class="bg-overlay"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <div class="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-8">
                 <i class="fas fa-seedling text-white text-3xl"></i>
             </div>
             <h1 class="text-5xl md:text-6xl font-bold text-white mb-6">
-                <span class="text-gradient">Green Guard</span> Prediction
+                Green Guard Prediction
             </h1>
             <p class="text-xl md:text-2xl text-white opacity-90 mb-8 max-w-3xl mx-auto">
                 AI-Powered Environmental Monitoring and Prediction System for a Sustainable Future
