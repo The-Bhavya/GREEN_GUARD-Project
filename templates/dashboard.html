@@ -239,102 +239,65 @@
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-chart-line text-green-500 mr-2"></i>Daily Generation Trend
                     </h3>
-                    <div id="daily-trend-chart"></div>
+                    {{ graphs.daily_trend|safe }}
                 </div>
 
                 <!-- Hourly Pattern Chart -->
-                <div class="chart-container">
+                <!-- <div class="chart-container">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-clock text-green-500 mr-2"></i>Hourly Generation Pattern
                     </h3>
-                    <div id="hourly-pattern-chart"></div>
-                </div>
+                    {{ graphs.hourly_pattern|safe }}
+                </div> -->
 
                 <!-- Weather Correlation Chart -->
-                <div class="chart-container">
+                <!-- <div class="chart-container">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-thermometer-half text-green-500 mr-2"></i>Weather Correlation Analysis
                     </h3>
-                    <div id="weather-correlation-chart"></div>
-                </div>
+                    {{ graphs.weather_correlation|safe }}
+                </div> -->
 
                 <!-- Irradiation Scatter Chart -->
-                <div class="chart-container">
+                <!-- <div class="chart-container">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-sun text-green-500 mr-2"></i>Solar Irradiation vs Power Generation
                     </h3>
-                    <div id="irradiation-scatter-chart"></div>
-                </div>
+                    {{ graphs.irradiation_scatter|safe }}
+                </div> -->
 
                 <!-- Monthly Performance Chart -->
                 <div class="chart-container">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-calendar-alt text-green-500 mr-2"></i>Monthly Performance Comparison
                     </h3>
-                    <div id="monthly-performance-chart"></div>
+                    {{ graphs.monthly_performance|safe }}
                 </div>
 
                 <!-- Power Distribution Chart -->
-                <div class="chart-container">
+                <!-- <div class="chart-container">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-chart-bar text-green-500 mr-2"></i>Power Generation Distribution
                     </h3>
-                    <div id="power-distribution-chart"></div>
-                </div>
+                    {{ graphs.power_distribution|safe }}
+                </div> -->
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
     <script>
-        // Render all charts
-        document.addEventListener('DOMContentLoaded', function() {
-            // Daily Trend Chart
-            var dailyTrendData = {{ graphs.daily_trend|safe }};
-            Plotly.newPlot('daily-trend-chart', dailyTrendData.data, dailyTrendData.layout, {responsive: true});
-
-            // Hourly Pattern Chart
-            var hourlyPatternData = {{ graphs.hourly_pattern|safe }};
-            Plotly.newPlot('hourly-pattern-chart', hourlyPatternData.data, hourlyPatternData.layout, {responsive: true});
-
-            // Weather Correlation Chart
-            var weatherCorrelationData = {{ graphs.weather_correlation|safe }};
-            Plotly.newPlot('weather-correlation-chart', weatherCorrelationData.data, weatherCorrelationData.layout, {responsive: true});
-
-            // Irradiation Scatter Chart
-            var irradiationScatterData = {{ graphs.irradiation_scatter|safe }};
-            Plotly.newPlot('irradiation-scatter-chart', irradiationScatterData.data, irradiationScatterData.layout, {responsive: true});
-
-            // Monthly Performance Chart
-            var monthlyPerformanceData = {{ graphs.monthly_performance|safe }};
-            Plotly.newPlot('monthly-performance-chart', monthlyPerformanceData.data, monthlyPerformanceData.layout, {responsive: true});
-
-            // Power Distribution Chart
-            var powerDistributionData = {{ graphs.power_distribution|safe }};
-            Plotly.newPlot('power-distribution-chart', powerDistributionData.data, powerDistributionData.layout, {responsive: true});
-
-            // Auto-hide flash messages
-            setTimeout(function() {
-                const flashMessages = document.querySelectorAll('.fixed .bg-green-500, .fixed .bg-red-500');
-                flashMessages.forEach(function(message) {
-                    message.style.transition = 'opacity 0.5s ease';
-                    message.style.opacity = '0';
-                    setTimeout(function() {
-                        message.remove();
-                    }, 500);
-                });
-            }, 5000);
-        });
-
-        // Make charts responsive
-        window.addEventListener('resize', function() {
-            Plotly.Plots.resize('daily-trend-chart');
-            Plotly.Plots.resize('hourly-pattern-chart');
-            Plotly.Plots.resize('weather-correlation-chart');
-            Plotly.Plots.resize('irradiation-scatter-chart');
-            Plotly.Plots.resize('monthly-performance-chart');
-            Plotly.Plots.resize('power-distribution-chart');
-        });
+        // Auto-hide flash messages
+        setTimeout(function() {
+            const flashMessages = document.querySelectorAll('.fixed .bg-green-500, .fixed .bg-red-500');
+            flashMessages.forEach(function(message) {
+                message.style.transition = 'opacity 0.5s ease';
+                message.style.opacity = '0';
+                setTimeout(function() {
+                    message.remove();
+                }, 500);
+            });
+        }, 5000);
     </script>
 </body>
 </html>

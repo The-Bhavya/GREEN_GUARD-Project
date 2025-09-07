@@ -10,7 +10,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
-import plotly.utils
+import plotly.io as pio
 import json
 
 
@@ -278,7 +278,7 @@ def create_dashboard_graphs(data):
         color_discrete_sequence=['#2E8B57', '#32CD32']
     )
     fig_daily.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-    graphs['daily_trend'] = json.dumps(fig_daily, cls=plotly.utils.PlotlyJSONEncoder)
+    graphs['daily_trend'] = pio.to_html(fig_daily, include_plotlyjs=False, full_html=False)
     
     # 2. Hourly Generation Pattern
     hourly_avg = data.groupby(['HOUR', 'PLANT_ID'])['DC_POWER'].mean().reset_index()
@@ -294,7 +294,7 @@ def create_dashboard_graphs(data):
         barmode='group'
     )
     fig_hourly.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-    graphs['hourly_pattern'] = json.dumps(fig_hourly, cls=plotly.utils.PlotlyJSONEncoder)
+    graphs['hourly_pattern'] = pio.to_html(fig_hourly, include_plotlyjs=False, full_html=False)
     
     # 3. Weather Correlation Heatmap
     weather_corr = data[['DC_POWER', 'AMBIENT_TEMPERATURE', 'MODULE_TEMPERATURE', 'IRRADIATION']].corr()
@@ -306,7 +306,7 @@ def create_dashboard_graphs(data):
         color_continuous_scale='RdYlGn'
     )
     fig_heatmap.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-    graphs['weather_correlation'] = json.dumps(fig_heatmap, cls=plotly.utils.PlotlyJSONEncoder)
+    graphs['weather_correlation'] = pio.to_html(fig_heatmap, include_plotlyjs=False, full_html=False)
     
     # 4. Irradiation vs Power Scatter
     sample_data = data.sample(n=min(3000, len(data)))
@@ -320,7 +320,7 @@ def create_dashboard_graphs(data):
         opacity=0.6
     )
     fig_scatter.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-    graphs['irradiation_scatter'] = json.dumps(fig_scatter, cls=plotly.utils.PlotlyJSONEncoder)
+    graphs['irradiation_scatter'] = pio.to_html(fig_scatter, include_plotlyjs=False, full_html=False)
     
     # 5. Monthly Performance
     monthly_data = data.groupby(['MONTH', 'PLANT_ID'])['DC_POWER'].sum().reset_index()
@@ -341,7 +341,7 @@ def create_dashboard_graphs(data):
         barmode='group'
     )
     fig_monthly.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-    graphs['monthly_performance'] = json.dumps(fig_monthly, cls=plotly.utils.PlotlyJSONEncoder)
+    graphs['monthly_performance'] = pio.to_html(fig_monthly, include_plotlyjs=False, full_html=False)
     
     # 6. Power Distribution Histogram
     fig_hist = px.histogram(
@@ -354,7 +354,7 @@ def create_dashboard_graphs(data):
         opacity=0.7
     )
     fig_hist.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-    graphs['power_distribution'] = json.dumps(fig_hist, cls=plotly.utils.PlotlyJSONEncoder)
+    graphs['power_distribution'] = pio.to_html(fig_hist, include_plotlyjs=False, full_html=False)
     
     return graphs
 

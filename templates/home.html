@@ -80,9 +80,9 @@
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="#home" class="text-green-500 px-3 py-2 rounded-md text-sm font-medium">Home</a>
                         <a href="/dashboard" class="text-gray-500 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Dashboard</a>
-                        <a href="#features" class="text-gray-500 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Features</a>
+                        <!-- <a href="#features" class="text-gray-500 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Features</a>
                         <a href="#about" class="text-gray-500 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
-                        <a href="#contact" class="text-gray-500 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                        <a href="#contact" class="text-gray-500 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a> -->
                         {% if current_user.is_authenticated %}
                             <span class="text-green-500 px-3 py-2 text-sm font-medium">Welcome, {{ current_user.username }}!</span>
                             <a href="/logout" class="text-gray-500 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Logout</a>
@@ -117,7 +117,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero-bg min-h-screen flex items-center justify-center">
+    <section id="home" class="hero-bg min-h-screen flex items-center justify-center relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-8">
                 <i class="fas fa-seedling text-white text-3xl"></i>
@@ -133,7 +133,37 @@
                     <i class="fas fa-chart-line mr-2"></i>
                     Start Predicting
                 </a>
-                
+                <a href="/dashboard" class="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-all duration-300 shadow-lg">
+                    <i class="fas fa-chart-area mr-2"></i>
+                    View Dashboard
+                </a>
+            </div>
+        </div>
+        <!-- Decorative gradients -->
+        <div class="absolute -top-20 -left-20 w-72 h-72 bg-white opacity-10 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-16 -right-16 w-80 h-80 bg-white opacity-10 rounded-full blur-3xl"></div>
+    </section>
+
+    <!-- Stats Strip -->
+    <section class="bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 py-10">
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-extrabold text-gray-800">99.9%</div>
+                    <div class="text-sm text-gray-500">Model Uptime</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-extrabold text-gray-800">10k+</div>
+                    <div class="text-sm text-gray-500">Predictions Run</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-extrabold text-gray-800">2</div>
+                    <div class="text-sm text-gray-500">Plants Monitored</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-extrabold text-gray-800">24x7</div>
+                    <div class="text-sm text-gray-500">Realtime Insights</div>
+                </div>
             </div>
         </div>
     </section>
@@ -198,6 +228,39 @@
     </section>
 
 
+    <!-- How It Works -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">From raw sensor data to actionable insights in three simple steps.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 rounded-xl p-8 card-hover">
+                    <div class="green-gradient w-14 h-14 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-database text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Ingest</h3>
+                    <p class="text-gray-600">Collects weather and generation data from multiple sources in real-time.</p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-8 card-hover">
+                    <div class="green-gradient w-14 h-14 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-robot text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Predict</h3>
+                    <p class="text-gray-600">Applies ML models to forecast DC power and detect anomalies.</p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-8 card-hover">
+                    <div class="green-gradient w-14 h-14 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-lightbulb text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Act</h3>
+                    <p class="text-gray-600">Delivers clear recommendations to maximize efficiency and uptime.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- About Section -->
     <section id="about" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -254,6 +317,48 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">What Users Say</h2>
+                <p class="text-lg text-gray-600">Trusted by engineers and energy managers.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gray-50 rounded-xl p-6 card-shadow">
+                    <div class="flex items-center mb-4">
+                        <img src="https://i.pravatar.cc/80?img=12" alt="avatar" class="w-12 h-12 rounded-full mr-3">
+                        <div>
+                            <p class="font-semibold text-gray-800">Aarav Sharma</p>
+                            <p class="text-sm text-gray-500">Plant Engineer</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">“The dashboard helped us cut diagnosis time by 40% and improve uptime.”</p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-6 card-shadow">
+                    <div class="flex items-center mb-4">
+                        <img src="https://i.pravatar.cc/80?img=32" alt="avatar" class="w-12 h-12 rounded-full mr-3">
+                        <div>
+                            <p class="font-semibold text-gray-800">Neha Verma</p>
+                            <p class="text-sm text-gray-500">Data Analyst</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">“Clean visuals and strong insights. The irradiation correlation is spot on.”</p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-6 card-shadow">
+                    <div class="flex items-center mb-4">
+                        <img src="https://i.pravatar.cc/80?img=22" alt="avatar" class="w-12 h-12 rounded-full mr-3">
+                        <div>
+                            <p class="font-semibold text-gray-800">Rahul Singh</p>
+                            <p class="text-sm text-gray-500">Operations Head</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">“We finally have one place to monitor and act. Highly recommended.”</p>
                 </div>
             </div>
         </div>
