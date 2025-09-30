@@ -1,0 +1,9 @@
+# .render.yaml for deploying a Flask app on Render
+services:
+  - type: web
+    name: green-guard-app
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    plan: free
+    autoDeploy: true

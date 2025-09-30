@@ -14,10 +14,14 @@ import plotly.io as pio
 import json
 
 
+# Load environment variables from .env if present
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'bhavya06'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your_secret_key')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:///users.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS', 'False') == 'True'
 db = SQLAlchemy(app)
 
 # Initialize Flask-Login
