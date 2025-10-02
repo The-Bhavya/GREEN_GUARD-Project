@@ -252,16 +252,16 @@ def dashboard():
         insights = calculate_insights(combined_data)
 
         return render_template('dashboard.html', 
-                             graphs=graphs,
-                             insights=insights,
-                             kpis={
-                                 'total_generation': total_generation,
-                                 'avg_daily_generation': avg_daily_generation,
-                                 'max_daily_generation': max_daily_generation,
-                                 'avg_irradiation': avg_irradiation,
-                                 'avg_ambient_temp': avg_ambient_temp,
-                                 'avg_module_temp': avg_module_temp
-                             })
+                            graphs=graphs,
+                            insights=insights,
+                            kpis={
+                                'total_generation': total_generation,
+                                'avg_daily_generation': avg_daily_generation,
+                                'max_daily_generation': max_daily_generation,
+                                'avg_irradiation': avg_irradiation,
+                                'avg_ambient_temp': avg_ambient_temp,
+                                'avg_module_temp': avg_module_temp
+                            })
     except Exception as e:
         flash(f'Error loading dashboard: {str(e)}', 'danger')
         return redirect(url_for('home'))
