@@ -60,6 +60,28 @@
         border: none;
         outline: none;
         border-radius: 5px;
+        transition: border 0.3s ease;
+    }
+
+    input:focus {
+        border: 2px solid #573b8a;
+    }
+
+    .input-helper {
+        color: #fff;
+        font-size: 0.75em;
+        text-align: center;
+        margin-top: -15px;
+        margin-bottom: 10px;
+        opacity: 0.8;
+    }
+
+    .signup .input-helper {
+        color: #fff;
+    }
+
+    .login .input-helper {
+        color: #573b8a;
     }
 
     button {
@@ -159,9 +181,12 @@
         <div class="signup">
             <form action="{{ url_for('register') }}" method="post">
                 <label for="chk" aria-hidden="true">Sign up</label>
-                <input type="text" name="username" placeholder="User name" required="">
-                <input type="email" name="email" placeholder="Email" required="">
-                <input type="password" name="password" placeholder="Password" required="">
+                <input type="text" name="username" placeholder="User name" required="" minlength="3" maxlength="20" pattern="[a-zA-Z0-9_]+">
+                <div class="input-helper">3-20 characters, letters, numbers, and underscores only</div>
+                <input type="email" name="email" placeholder="Email" required="" maxlength="150">
+                <div class="input-helper">Valid email address</div>
+                <input type="password" name="password" placeholder="Password" required="" minlength="6" maxlength="50">
+                <div class="input-helper">Min 6 chars, include uppercase, lowercase, and number</div>
                 <button type="submit">Sign up</button>
             </form>
         </div>
@@ -169,7 +194,7 @@
         <div class="login">
             <form action="{{ url_for('login') }}" method="post">
                 <label for="chk" aria-hidden="true">Login</label>
-                <input type="email" name="email" placeholder="Email" required="">
+                <input type="text" name="email" placeholder="Email or Username" required="">
                 <input type="password" name="password" placeholder="Password" required="">
                 <button type="submit">Login</button>
             </form>
@@ -187,6 +212,135 @@
                 }, 300);
             });
         }, 5000);
+
+        // Form validation
+        const signupForm = document.querySelector('.signup form');
+        const loginForm = document.querySelector('.login form');
+
+        // Signup validation
+        if (signupForm) {
+            signupForm.addEventListener('submit', function(e) {
+                const username = this.querySelector('input[name="username"]').value.trim();
+                const email = this.querySelector('input[name="email"]').value.trim();
+                const password = this.querySelector('input[name="password"]').value;
+
+                // Username validation
+                if (username.length < 3) {
+                    e.preventDefault();
+                    alert('Username must be at least 3 characters long');
+                    return false;
+                }
+
+                if (username.length > 20) {
+                    e.preventDefault();
+                    alert('Username must be less than 20 characters');
+                    return false;
+                }
+
+                if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                    e.preventDefault();
+                    alert('Username can only contain letters, numbers, and underscores');
+                    return false;
+                }
+
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    e.preventDefault();
+                    alert('Please enter a valid email address');
+                    return false;
+                }
+
+                // Password validation
+                if (password.length < 6) {
+                    e.preventDefault();
+                    alert('Password must be at least 6 characters long');
+                    return false;
+                }
+
+                if (password.length > 50) {
+                    e.preventDefault();
+                    alert('Password must be less than 50 characters');
+                    return false;
+                }
+
+                if (!/[A-Z]/.test(password)) {
+                    e.preventDefault();
+                    alert('Password must contain at least one uppercase letter');
+                    return false;
+                }
+
+                if (!/[a-z]/.test(password)) {
+                    e.preventDefault();
+                    alert('Password must contain at least one lowercase letter');
+                    return false;
+                }
+
+                if (!/[0-9]/.test(password)) {
+                    e.preventDefault();
+                    alert('Password must contain at least one number');
+                    return false;
+                }
+            });
+        }
+
+        // Login validation
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                const email = this.querySelector('input[name="email"]').value.trim();
+                const password = this.querySelector('input[name="password"]').value;
+
+                // Email/Username validation
+                if (email.length === 0) {
+                    e.preventDefault();
+                    alert('Please enter your email or username');
+                    return false;
+                }
+
+                // Password validation
+                if (password.length === 0) {
+                    e.preventDefault();
+                    alert('Please enter your password');
+                    return false;
+                }
+            });
+        }
+
+        // Real-time input validation feedback
+        document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]').forEach(function(input) {
+            input.addEventListener('blur', function() {
+                const name = this.getAttribute('name');
+                const value = this.value.trim();
+
+                // Reset border
+                this.style.border = '';
+
+                if (name === 'username' && value) {
+                    if (value.length < 3 || value.length > 20 || !/^[a-zA-Z0-9_]+$/.test(value)) {
+                        this.style.border = '2px solid #dc3545';
+                    } else {
+                        this.style.border = '2px solid #28a745';
+                    }
+                }
+
+                if (name === 'email' && value) {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(value)) {
+                        this.style.border = '2px solid #dc3545';
+                    } else {
+                        this.style.border = '2px solid #28a745';
+                    }
+                }
+
+                if (name === 'password' && value && this.closest('.signup')) {
+                    if (value.length < 6 || !/[A-Z]/.test(value) || !/[a-z]/.test(value) || !/[0-9]/.test(value)) {
+                        this.style.border = '2px solid #dc3545';
+                    } else {
+                        this.style.border = '2px solid #28a745';
+                    }
+                }
+            });
+        });
     </script>
 </body>
 

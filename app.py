@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import pandas as pd
 import joblib
+import re
 from pathlib import Path
 from datetime import datetime
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -156,8 +157,17 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email_or_username = request.form['email']
-        password = request.form['password']
+        email_or_username = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        
+        # Backend validation
+        if not email_or_username:
+            flash('Email or username is required', 'danger')
+            return render_template('login.html')
+        
+        if not password:
+            flash('Password is required', 'danger')
+            return render_template('login.html')
         
         user = User.query.filter_by(email=email_or_username).first() or \
                 User.query.filter_by(username=email_or_username).first()
@@ -174,14 +184,62 @@ def login():
 @app.route('/signup', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        
+        # Backend validation
+        errors = []
+        
+        # Username validation
+        if not username:
+            errors.append('Username is required')
+        elif len(username) < 3:
+            errors.append('Username must be at least 3 characters long')
+        elif len(username) > 20:
+            errors.append('Username must be less than 20 characters')
+        elif not username.replace('_', '').isalnum():
+            errors.append('Username can only contain letters, numbers, and underscores')
+        
+        # Email validation
+        if not email:
+            errors.append('Email is required')
+        else:
+            email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_pattern, email):
+                errors.append('Please enter a valid email address')
+            elif len(email) > 150:
+                errors.append('Email is too long')
+        
+        # Password validation
+        if not password:
+            errors.append('Password is required')
+        elif len(password) < 6:
+            errors.append('Password must be at least 6 characters long')
+        elif len(password) > 50:
+            errors.append('Password must be less than 50 characters')
+        elif not any(c.isupper() for c in password):
+            errors.append('Password must contain at least one uppercase letter')
+        elif not any(c.islower() for c in password):
+            errors.append('Password must contain at least one lowercase letter')
+        elif not any(c.isdigit() for c in password):
+            errors.append('Password must contain at least one number')
+        
+        # Check for errors
+        if errors:
+            for error in errors:
+                flash(error, 'danger')
+            return render_template('login.html')
+        
+        # Check if user already exists
         existing_user = User.query.filter(
             (User.username == username) | (User.email == email)
         ).first()
         if existing_user:
-            flash('Username or email already exists', 'danger')
+            if existing_user.username == username:
+                flash('Username already exists', 'danger')
+            else:
+                flash('Email already exists', 'danger')
         else:
             hashed_password = generate_password_hash(password)
             new_user = User(username=username, email=email, password=hashed_password)
