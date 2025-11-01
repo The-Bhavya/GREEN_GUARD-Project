@@ -9,3 +9,4 @@ flask_login
 werkzeug
 scikit-learn
 python-dotenv
+pytest

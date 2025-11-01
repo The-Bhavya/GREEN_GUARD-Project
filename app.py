@@ -28,7 +28,8 @@ db = SQLAlchemy(app)
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+# Use setattr to avoid static type-checker errors when assigning login_view
+setattr(login_manager, 'login_view', 'login')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -165,6 +166,17 @@ def login():
             flash('Email or username is required', 'danger')
             return render_template('login.html')
         
+        # Stricter email validation: only one dot in domain (e.g., example.com)
+        if '@' in email_or_username:
+            import re
+            email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_pattern, email_or_username):
+                flash('Please enter a valid email address', 'danger')
+                return render_template('login.html')
+            elif len(email_or_username) > 150:
+                flash('Email is too long', 'danger')
+                return render_template('login.html')
+        
         if not password:
             flash('Password is required', 'danger')
             return render_template('login.html')
@@ -205,7 +217,8 @@ def register():
         if not email:
             errors.append('Email is required')
         else:
-            email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            # Stricter email validation: only one dot in domain (e.g., example.com)
+            email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
             if not re.match(email_pattern, email):
                 errors.append('Please enter a valid email address')
             elif len(email) > 150:
@@ -242,7 +255,11 @@ def register():
                 flash('Email already exists', 'danger')
         else:
             hashed_password = generate_password_hash(password)
-            new_user = User(username=username, email=email, password=hashed_password)
+            # Instantiate without kwargs and assign attributes to avoid constructor binding issues
+            new_user = User()
+            new_user.username = username
+            new_user.email = email
+            new_user.password = hashed_password
             db.session.add(new_user)
             db.session.commit()
             flash('Registration successful! Please login.', 'success')
