@@ -407,7 +407,7 @@ def create_dashboard_graphs(data):
     monthly_data['DC_POWER_MWh'] = monthly_data['DC_POWER'] / 1000000
     
     month_order = ['January', 'February', 'March', 'April', 'May', 'June',
-                   'July', 'August', 'September', 'October', 'November', 'December']
+                    'July', 'August', 'September', 'October', 'November', 'December']
     monthly_data['MONTH'] = pd.Categorical(monthly_data['MONTH'], categories=month_order, ordered=True)
     monthly_data = monthly_data.sort_values('MONTH')
     
